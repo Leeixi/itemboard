@@ -1,0 +1,22 @@
+from django import forms
+from .models import Item
+
+class NewItemForm(forms.ModelForm):
+    class Meta:
+        model = Item
+        fields = ('category', 'name', 'description', 'price', 'image', 'created_by')
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'placeholder': 'Enter product name.',
+                'class': "w-full py-4 px-6 rounded-xl"
+            }),
+            'description': forms.Textarea(attrs={
+                'placeholder': 'Enter description of your product.',
+                'class': "w-full py-4 px-6 rounded-xl"
+            }),
+            # Assuming 'price' should be a number input
+            'price': forms.NumberInput(attrs={
+                'placeholder': 'Enter price.',
+                'class': "w-full py-4 px-6 rounded-xl"
+            }),
+        }

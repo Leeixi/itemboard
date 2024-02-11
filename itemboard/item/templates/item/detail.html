@@ -1,0 +1,59 @@
+{% extends 'core/base.html' %}
+
+{% block title %} {{ item.name }} {% endblock %}
+
+{% block content %}
+<style>
+    .item-image {
+        width: 50%;
+        max-width: 300px;
+        min-width: 450px;
+    }
+
+    .center-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #008CBA;
+        overflow: hidden;
+        width: 0;
+        height: 100%;
+        transition: .5s ease;
+      }
+</style>
+
+<div class="center-container">
+    <div class="col-span-1 p-3 rounded-xl">
+        <div class="rounded-xl">
+            {% if item.image %}
+                <img src="{{ item.image.url }}" class="item-image rounded-t-xl">
+                <div class="overlay">
+                    <div>Hello World</div>
+                  </div>
+            {% else %}
+                <div class="w-full h-64 bg-gray-300 rounded-t-xl"></div>
+            {% endif %}
+        </div>
+        <h1 class="mb-6 text-3xl">{{ item.name }}</h1>
+        <p class="text-gray-500"><strong>Price: </strong> {{ item.price }} </p>
+        <p class="text-gray-500"><strong>Seller: </strong> {{ item.created_by }} </p>
+        {% if item.description %}
+        <p class="text-gray-700"><strong>Description: </strong> {{ item.description }} </p>
+        {% endif %}
+        <div class="flex flex-row mt-6">
+            <a href="#" class="mr-2 px-6 py-3 text-lg font-semibold bg-teal-500 rounded-xl text-white hover:bg-teal-700">Contact seller</a>
+            <form action="{% url 'item:delete_item' item.pk %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="item_id" value="{{ item.pk }}">
+                <button type="submit" class="inline-block px-6 py-3 text-lg font-semibold bg-red-500 text-black rounded-xl hover:bg-red-700">Delete item</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

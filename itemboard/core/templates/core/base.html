@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <title>{% block title %}{% endblock %} | itemboard</title>
+    </head>
+
+    <body class="flex flex-col min-h-screen">
+        <nav class="px-6 py-6 flex justify-between items-center border-b border-gray-200">
+            <a href="/" class="text-xl font-semibold">itemboard</a>
+
+            <div class="space-x-6">
+                <a href="/" class="text-lg center-right font-semibold hover:text-gray-500">Browse</a>
+        
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'item:new' %}" class="text-lg center-right font-semibold hover:text-gray-500">New Item</a>
+                <a href="#" class="px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Inbox</a>
+                <a href="#" class="px-6 py-3 text-lg font-semibold bg-gray-500 text-white rounded-xl hover:bg-gray-700">Dashboard</a>
+                <a href="{% url 'core:logout' %}" class="px-6 py-3 text-lg font-semibold bg-red-500 text-black rounded-xl hover:bg-gray-700">Log out</a>
+                {% else %}
+                    <a href="{% url 'core:signup' %}" class="px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Sign up</a>
+                    <a href="{% url 'core:login' %}" class="px-6 py-3 text-lg font-semibold bg-gray-500 text-white rounded-xl hover:bg-gray-700">Log in</a> 
+                {% endif %}
+            </div>
+        </nav>
+
+        <main class="flex-grow">
+            {% block content %}
+            {% endblock %}
+        </main>  
+    </body>
+
+        {% comment %} <footer class="py-8 px-6 flex justify-between bg-gray-800">
+            <div class="w-2/3 pr-10">
+                <h3 class="mb-5 text-xl font-semibold text-gray-300">About Us</h3>
+                
+                <p class="text-lg text-gray-500">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            </div> {% endcomment %}
+        
+            {% comment %} <div class="w-1/ 3flex justify-end">
+                <h3 class="mb-5 text-xl font-semibold text-gray-300">Quick Links</h3>
+        
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-lg text-teal-400 hover:text-teal-500">Home</a></li>
+                    <li><a href="#" class="text-lg text-teal-400 hover:text-teal-500">About</a></li>
+                    <li><a href="{% url 'core:contact' %}" class="text-lg text-teal-400 hover:text-teal-500">Contact</a></li> {% endcomment %}
+                    {% comment %} Write: Nonexistent {% endcomment %}
+                    {% comment %} <li><a href="#" class="text-lg text-teal-400 hover:text-teal-500">Privacy</a></li>
+                </ul>
+            </div>
+        </footer> {% endcomment %}
+</html>
