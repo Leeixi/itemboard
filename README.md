@@ -32,3 +32,6 @@ make createsuperuser
 make run
 ```
 Go to  http://127.0.0.1:8000/
+
+Access admin dashboard - create superuser first:
+http://127.0.0.1:8000/admin
