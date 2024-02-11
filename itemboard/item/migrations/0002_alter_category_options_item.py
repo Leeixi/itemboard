@@ -22,7 +22,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.TextField(blank=True, null=True)),
-                ('price', models.FloatField()),
                 ('image', models.ImageField(blank=True, null=True, upload_to='item_images')),
                 ('is_sold', models.BooleanField(default=False)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
