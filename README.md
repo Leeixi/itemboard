@@ -27,7 +27,7 @@ Create admin/super user
 make createsuperuser
 ```
 
-#Run app
+# Run app
 ```
 make run
 ```
