@@ -1,0 +1,34 @@
+# itemboard
+
+Simple django app used for learning and as a playground.
+
+## Instructions to run in dev mode
+
+Make sure you have installed python3, pip3. GNU make is optional.
+
+### Start in development mode
+Create and use virtual environment 
+```
+make venv
+source venv/bin/activate
+```
+
+Install depedencies
+```
+make install
+```
+### Run only during initial run
+Run db migration
+```
+make migrate
+```
+Create admin/super user
+```
+make createsuperuser
+```
+
+#Run app
+```
+make run
+```
+Go to  http://127.0.0.1:8000/
