@@ -27,7 +27,7 @@ Create admin/super user
 make createsuperuser
 ```
 
-# Run app
+# Run app locally
 ```
 make run
 ```
@@ -35,3 +35,9 @@ Go to  http://127.0.0.1:8000/
 
 Access admin dashboard - create superuser first:
 http://127.0.0.1:8000/admin
+
+# Run as docker container
+### Build image
+``` 
+docker build -t itemboard.$(date +"%Y-%m-%d") .
+```
