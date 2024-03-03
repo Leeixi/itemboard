@@ -7,11 +7,11 @@ class NewItemForm(forms.ModelForm):
         fields = ('category', 'name', 'description', 'image', 'created_by')
         widgets = {
             'name': forms.TextInput(attrs={
-                'placeholder': 'Enter product name.',
+                'placeholder': 'Enter item name.',
                 'class': "w-full py-4 px-6 rounded-xl"
             }),
             'description': forms.Textarea(attrs={
-                'placeholder': 'Enter description of your product.',
+                'placeholder': 'Enter description of item.',
                 'class': "w-full py-4 px-6 rounded-xl"
             })
         }

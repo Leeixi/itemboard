@@ -9,7 +9,7 @@ Make sure you have installed python3, pip3. GNU make is optional.
 ### Start in development mode
 Create and use virtual environment 
 ```
-make venv
+make env
 source venv/bin/activate
 ```
 
