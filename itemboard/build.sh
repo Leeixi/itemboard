@@ -12,4 +12,4 @@ python itemboard/manage.py collectstatic --no-input
 python itemboard/manage.py migrate
 
 cd itemboard
-gunicorn itemboard.asgi:application -k uvicorn.workers.UvicornWorker
+python -m gunicorn itemboard.asgi:application -k uvicorn.workers.UvicornWorker
