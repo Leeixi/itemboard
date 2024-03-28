@@ -13,6 +13,3 @@ migrate:
 #Create superuser
 createsuperuser:
 	python3 itemboard/manage.py createsuperuser
-# Run for production
-runinprod:
-	bash itemboard/runinprod.sh
