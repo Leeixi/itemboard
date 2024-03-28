@@ -5,7 +5,7 @@ env:
 install:
 	pip3 install -r requirements.txt
 #Run in develpment server
-run:
+dev:
 	python3 itemboard/manage.py runserver
 #Migrate database
 migrate:
