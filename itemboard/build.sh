@@ -10,3 +10,6 @@ python itemboard/manage.py collectstatic --no-input
 
 # Apply any outstanding database migrations
 python itemboard/manage.py migrate
+
+cd itemboard
+gunicorn itemboard.asgi:application -k uvicorn.workers.UvicornWorker
