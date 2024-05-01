@@ -86,8 +86,8 @@ DATABASES = {
    'default': {
        'ENGINE': 'django.db.backends.postgresql',
        'NAME':config('DB_NAME', default='itemboard'),
-       'USER': config('DB_USERNAME'),
-       'PASSWORD': config('DB_PASS'),
+       'USER': config('DB_USERNAME', default='postgres'),
+       'PASSWORD': config('DB_PASS', default='pass'),
        'HOST': config('DB_HOST', default='localhost'),
        'PORT': '5432',
    }
