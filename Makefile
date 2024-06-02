@@ -1,16 +1,17 @@
-#Create venv
+# Create venv
 env:
 	python3 -m venv venv
-#Install dependencies 
+	source venv/bin/activate
+# Install dependencies 
 install:
 	pip3 install -r requirements.txt
 	touch .env
-#Run in develpment server
-dev:
-	python3 itemboard/manage.py runserver
-#Migrate database
+# Migrate database
 migrate:
 	python3 itemboard/manage.py migrate
-#Create superuser
+# Create superuser
 createsuperuser:
 	python3 itemboard/manage.py createsuperuser
+# Run in develpment server
+dev:
+	python3 itemboard/manage.py runserver
