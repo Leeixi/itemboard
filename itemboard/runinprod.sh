@@ -1,2 +1,2 @@
-cd itemboard
-gunicorn -b :5000 itemboard.wsgi:application
+#!/usr/bin/env bash
+gunicorn -b :5000 itemboard.wsgi.application

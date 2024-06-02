@@ -17,4 +17,4 @@ dev:
 	export ENV=dev && python3 itemboard/manage.py runserver
 # Run in prod
 prod:
-	export ENV=prod && python3 itemboard/manage.py runserver
+	export ENV=prod && python3 itemboard/runinprod.sh

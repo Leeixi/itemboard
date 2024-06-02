@@ -8,9 +8,10 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip && pip install --no-cache-dir -r /tmp/requirements.txt \
+    && pip install gunicorn \
     && rm -rf /tmp/requirements.txt \
     && useradd -U app_user \
     && install -d -m 0755 -o app_user -g app_user /app/static
 COPY --chown=app_user:app_user . .
 EXPOSE 5000
-CMD ["make", "itemboard/runinprod"]
+CMD ["make", "prod"]
