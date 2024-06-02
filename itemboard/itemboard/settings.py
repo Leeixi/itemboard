@@ -82,16 +82,25 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql',
-#        'NAME':config('DB_NAME', default='itemboard'),
-#        'USER': config('DB_USERNAME', default='postgres'),
-#        'PASSWORD': config('DB_PASS', default='pass'),
-#        'HOST': config('DB_HOST', default='itemboard-db-1'),
-#        'PORT': '5432',
-#    }
-# }
+if os.getenv('ENV') == 'prod':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME', default='itemboard'),
+            'USER': config('DB_USERNAME', default='postgres'),
+            'PASSWORD': config('DB_PASS', default='pass'),
+            'HOST': config('DB_HOST', default='itemboard-db-1'),
+            'PORT': '5432',
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
