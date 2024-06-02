@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: itemboard
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+    ports:
+      - 5432:5432
+    networks:
+      - mynetwork
+
+
+  web:
+    build: .
+    command: python3 itemboard/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "5000:5000"
+    networks:
+      - mynetwork
+    depends_on:
+      - db
+
+networks:
+  mynetwork:
+    driver: bridge

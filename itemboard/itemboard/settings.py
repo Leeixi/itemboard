@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = config('SECRET_KEY', default='supercryptkey')
 
 DEBUG = True
 
@@ -88,7 +88,7 @@ DATABASES = {
        'NAME':config('DB_NAME', default='itemboard'),
        'USER': config('DB_USERNAME', default='postgres'),
        'PASSWORD': config('DB_PASS', default='pass'),
-       'HOST': config('DB_HOST', default='localhost'),
+       'HOST': config('DB_HOST', default='itemboard-db-1'),
        'PORT': '5432',
    }
 }

@@ -4,6 +4,7 @@ env:
 #Install dependencies 
 install:
 	pip3 install -r requirements.txt
+	touch .env
 #Run in develpment server
 dev:
 	python3 itemboard/manage.py runserver
