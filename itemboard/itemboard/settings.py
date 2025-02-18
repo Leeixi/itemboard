@@ -82,7 +82,7 @@ if os.getenv('ENV') == 'prod':
             'NAME': config('DB_NAME', default='itemboard'),
             'USER': config('DB_USERNAME', default='postgres'),
             'PASSWORD': config('DB_PASS', default='pass'),
-            'HOST': config('DB_HOST', default='itemboard-db-1'),
+            'HOST': config('DB_HOST', default='database'),
             'PORT': '5432',
         }
     }

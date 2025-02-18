@@ -7,21 +7,19 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # Create app dir
 RUN mkdir -p app
 WORKDIR app
-# Set .env variable
-RUN echo "DB_HOST=localhost" > .env
 # Keep things up to date
 RUN apt-get update \
   && apt-get install -y --no-install-recommends build-essential libpq-dev make \
   && rm -rf /var/lib/apt/lists/*
 # And install things to run app, also setup users
-COPY requirements.txt /tmp/requirements.txt
+COPY itemboard/requirements.txt /tmp/requirements.txt
 RUN pip install --upgrade pip && pip install -r /tmp/requirements.txt \
     && useradd -U itemboard-user \
     && install -d -m 0755 -o itemboard-user -g itemboard-user /app/static
 # Set ownership
-COPY --chown=itemboard-user:itemboard-user . .
+COPY --chown=itemboard-user:itemboard-user itemboard .
 # Just for reminder
 EXPOSE 80
-RUN python3 itemboard/manage.py migrate
+RUN python3 manage.py migrate
 # Run app
 CMD ["make", "dev"]
