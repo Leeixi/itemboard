@@ -27,9 +27,9 @@ Create admin/super user
 make createsuperuser
 ```
 
-### Run app locally
+### Run app locally in development mode
 ```
-make run
+make dev
 ```
 Go to  http://127.0.0.1:8000/
 
