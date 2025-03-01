@@ -163,3 +163,7 @@ TODO
 itemboard/media
 render.yaml
 media
+
+# igonore .tfstate
+.terraform
+.terraform.lock.hcl
