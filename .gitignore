@@ -167,3 +167,4 @@ media
 # igonore .tfstate
 .terraform
 .terraform.lock.hcl
+terraform.*
