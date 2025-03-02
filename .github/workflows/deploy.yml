@@ -40,11 +40,11 @@ jobs:
           pip install -r requirements.txt
           
       - name: Run tests
-        env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
-          DJANGO_SETTINGS_MODULE: config.settings.test
+        # env:
+        #   DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+        #   DJANGO_SETTINGS_MODULE: config.settings.test
         run: |
-          python manage.py test
+          python itemboard/manage.py test
 
   build-and-create-artifact:
     name: Build and Create artifact
@@ -73,7 +73,7 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile.prod .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
