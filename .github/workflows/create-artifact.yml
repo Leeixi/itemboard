@@ -44,7 +44,7 @@ jobs:
       - name: Get project version
         id: project-version
         run: |
-          if [ -f "VERSION" ]; then
+          if [ -f "CHANGELOG.md" ]; then
             VERSION=$(cat CHANGELOG.md | head -n 1)
           else
             # Fallback to using date-based version if no VERSION file
