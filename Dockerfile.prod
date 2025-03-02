@@ -1,20 +1,51 @@
+# Use Python 3.10 slim as the base image for a smaller footprint
 FROM python:3.10-slim
-ENV PYTHONUNBUFFERED 1
+
+# Set environment variables
+# Prevents Python from writing .pyc files to disk
 ENV PYTHONDONTWRITEBYTECODE 1
+# Ensures that Python output is sent straight to terminal without buffering
+ENV PYTHONUNBUFFERED 1
+# Set environment to production
 ENV ENV prod
+
+# Create application directory
 RUN mkdir -p itemboard
+# Set working directory
 WORKDIR itemboard
+
+# Update apt packages and install necessary build dependencies
+# build-essential: provides compiler and other tools needed for building packages
+# libpq-dev: PostgreSQL development files needed for psycopg2
+# make: required to run Makefile commands
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends build-essential libpq-dev make \
-  && rm -rf /var/lib/apt/lists/*
+ && apt-get install -y --no-install-recommends build-essential libpq-dev make \
+ && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements file to temporary location
 COPY itemboard/requirements.txt /tmp/requirements.txt
+
+# Install Python dependencies
+# 1. Upgrade pip
+# 2. Install project requirements
+# 3. Install gunicorn for production WSGI server
+# 4. Remove temporary requirements file
+# 5. Create a non-root user for better security
+# 6. Create a static files directory with appropriate permissions
 RUN pip install --upgrade pip && pip install -r /tmp/requirements.txt \
-    && pip install gunicorn \
-    && rm -rf /tmp/requirements.txt \
-    && useradd -U itemboard-user \
-    && install -d -m 0755 -o itemboard-user -g itemboard-user /itemboard/static
+ && pip install gunicorn \
+ && rm -rf /tmp/requirements.txt \
+ && useradd -U itemboard-user \
+ && install -d -m 0755 -o itemboard-user -g itemboard-user /itemboard/static
+
+# Copy application code to working directory and set ownership to non-root user
 COPY --chown=itemboard-user:itemboard-user itemboard .
-# Just for reminder
+
+# Document that the container listens on port 80
+# This is just informational and doesn't actually expose the port
 EXPOSE 80
-# Run itemboard
+
+# Start command
+# 1. Run database migrations
+# 2. Execute the production command from the Makefile
 CMD python3 manage.py migrate && make prod
