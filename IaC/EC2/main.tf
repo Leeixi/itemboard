@@ -24,7 +24,7 @@ resource "aws_instance" "debian_server" {
   instance_type          = var.instance_type
   key_name               = var.key_name
   subnet_id              = var.subnet_id
-  vpc_security_group_ids = [data.aws_security_group.itemboard_tasks.id]
+  vpc_security_group_ids = [data.aws_security_group.itemboard_tasks.id, aws_security_group.itemboard_ec2_sg.id]
 
   root_block_device {
     volume_size           = 8
@@ -61,5 +61,29 @@ resource "aws_eip" "debian_server" {
   tags = {
     Name    = "${var.project_name}-debian-server-eip"
     Project = var.project_name
+  }
+}
+
+resource "aws_security_group" "itemboard_ec2_sg" {
+  name        = "itemboard-ec2-sg"
+  description = "Allow inbound traffic to itemboard EC2 instance"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port     = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "itemboard-ec2-sg"
   }
 }
