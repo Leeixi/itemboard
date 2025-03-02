@@ -1,7 +1,7 @@
 variable "app_name" {
   description = "Name of the application"
   type        = string
-  default     = "demo-app"
+  default     = "itemboard"
 }
 
 variable "app_environment" {
