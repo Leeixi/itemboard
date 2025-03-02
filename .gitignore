@@ -167,4 +167,6 @@ media
 # igonore .tfstate
 .terraform
 .terraform.lock.hcl
-terraform.*
+terraform.tfstate
+*.pem
+terraform.tfstate.backup
