@@ -8,6 +8,10 @@ module "vpc" {
   source = "./VPC"
 }
 
+module "sqs" {
+  source = "./SQS"
+}
+
 # Include the ECR module
 module "ecr" {
   source = "./ECR"
