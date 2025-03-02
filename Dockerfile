@@ -22,4 +22,4 @@ COPY --chown=itemboard-user:itemboard-user itemboard .
 EXPOSE 80
 RUN python3 manage.py migrate
 # Run app
-CMD ["make", "dev"]
+CMD make dev
