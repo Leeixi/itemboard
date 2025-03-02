@@ -21,8 +21,3 @@ module "ecr" {
 #   ecr_repo_url = module.ecr.repository_url
 #   depends_on = [module.vpc, module.ecr]
 # }
-
-# Include the IAM module
-module "iam" {
-  source = "./IAM"
-}
