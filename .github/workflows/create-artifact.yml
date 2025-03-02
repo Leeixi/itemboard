@@ -76,9 +76,3 @@ jobs:
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION"
-      
-      # - name: Update ECS service
-      #   run: |
-      #     aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER }} \
-      #                            --service ${{ secrets.ECS_SERVICE }} \
-      #                            --force-new-deployment
