@@ -11,21 +11,6 @@ jobs:
     name: Test Django App
     runs-on: ubuntu-latest
     
-    # services:
-    #   postgres:
-    #     image: postgres:13
-    #     env:
-    #       POSTGRES_USER: postgres
-    #       POSTGRES_PASSWORD: postgres
-    #       POSTGRES_DB: test_db
-    #     ports:
-    #       - 5432:5432
-    #     options: >-
-    #       --health-cmd pg_isready
-    #       --health-interval 10s
-    #       --health-timeout 5s
-    #       --health-retries 5
-    
     steps:
       - uses: actions/checkout@v3
       
@@ -47,6 +32,7 @@ jobs:
           python itemboard/manage.py test
 
   build-and-create-artifact:
+
     name: Build and Create artifact
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -54,6 +40,18 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Get project version
+        id: project-version
+        run: |
+          if [ -f "VERSION" ]; then
+            VERSION=$(cat CHANGELOG.md | head -n 1)
+          else
+            # Fallback to using date-based version if no VERSION file
+            VERSION=$(date +'%Y.%m.%d.%H%M')
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Retrieved version: $VERSION"
       
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -71,13 +69,13 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-          IMAGE_TAG: ${{ github.sha }}
+          VERSION: ${{ steps.project-version.outputs.version }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION -f Dockerfile .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$VERSION"
       
       # - name: Update ECS service
       #   run: |
