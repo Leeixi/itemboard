@@ -97,6 +97,18 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+# Attach SSM policy
+resource "aws_iam_role_policy_attachment" "lambda_ssm_full_accesss" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMFullAccess"
+}
+
+# Attach SSM policy
+resource "aws_iam_role_policy_attachment" "lambda_ecr_readonly" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
 # Create Lambda function
 resource "aws_lambda_function" "sqs_to_sns" {
   function_name    = "${var.project_name}-sqs-to-sns"
@@ -111,7 +123,8 @@ resource "aws_lambda_function" "sqs_to_sns" {
  
   environment {
     variables = {
-      SNS_TOPIC_ARN = aws_sns_topic.email_notifications.arn
+      SNS_TOPIC_ARN = aws_sns_topic.email_notifications.arn,
+      EC2_INSTANCE_ID = var.EC2_INSTANCE_ID
     }
   }
 

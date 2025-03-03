@@ -9,10 +9,14 @@ logger.setLevel(logging.INFO)
 
 # Initialize AWS clients
 sns_client = boto3.client('sns')
+ssm_client = boto3.client('ssm')
 
 def handler(event, context):
     """
-    Lambda function handler to process messages from SQS and send them via SNS.
+    Lambda function handler to:
+    1. Process ECR push events from SQS
+    2. Update EC2 instance with the latest Docker image
+    3. Send notification about the update
     
     Parameters:
     - event: The event data from SQS
@@ -25,13 +29,15 @@ def handler(event, context):
     
     # Get environment variables
     sns_topic_arn = os.environ.get('SNS_TOPIC_ARN')
+    ec2_instance_id = os.environ.get('EC2_INSTANCE_ID')
     
     if not sns_topic_arn:
         logger.error("SNS_TOPIC_ARN environment variable not set")
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'error': 'SNS_TOPIC_ARN environment variable not set'})
-        }
+        return error_response("SNS_TOPIC_ARN environment variable not set")
+    
+    if not ec2_instance_id:
+        logger.error("EC2_INSTANCE_ID environment variable not set")
+        return error_response("EC2_INSTANCE_ID environment variable not set")
     
     try:
         # Process each record from SQS
@@ -49,31 +55,33 @@ def handler(event, context):
             if isinstance(body, dict) and 'repository' in body:
                 repository = body.get('repository', 'unknown')
                 image_tag = body.get('imageTag', 'latest')
+                image_uri = f"{repository}:{image_tag}"
                 timestamp = body.get('timestamp', 'unknown time')
                 image_digest = body.get('imageDigest', 'unknown')
                 
+                # Update the EC2 instance with the new Docker image
+                update_result = update_ec2_docker_container(
+                    ec2_instance_id, 
+                    f"471112562146.dkr.ecr.eu-central-1.amazonaws.com/{image_uri}"
+                )
+                
                 # Create email subject and message
-                subject = f"[{repository}] New image pushed: {image_tag}"
+                subject = f"[{repository}] New image deployed: {image_tag}"
                 message = (
-                    f"New image push detected!\n\n"
+                    f"New image deployed successfully!\n\n"
                     f"Repository: {repository}\n"
                     f"Image Tag: {image_tag}\n"
                     f"Image Digest: {image_digest}\n"
-                    f"Timestamp: {timestamp}\n\n"
+                    f"Timestamp: {timestamp}\n"
+                    f"EC2 Instance: {ec2_instance_id}\n"
+                    f"Deployment Status: {update_result['status']}\n\n"
+                    f"Command Output:\n{update_result.get('output', 'No output available')}\n\n"
                     f"This notification was sent automatically by the ECR event notification system."
                 )
             else:
-                # For service push events or other message types
-                subject = "Deployment Notification"
-                
-                if isinstance(body, dict):
-                    # Try to extract service information if available
-                    service = body.get('service', body.get('serviceName', 'unknown service'))
-                    status = body.get('status', 'deployed')
-                    message = f"Service '{service}' has been {status}.\n\nFull details: {json.dumps(body, indent=2)}"
-                else:
-                    # Generic message for non-JSON or unexpected format
-                    message = f"Received deployment notification:\n\n{body}"
+                # Skip non-ECR messages
+                logger.info("Skipping non-ECR event message")
+                continue
             
             # Log what we're about to send
             logger.info(f"Preparing to send SNS message with subject: {subject}")
@@ -85,14 +93,75 @@ def handler(event, context):
         
         return {
             'statusCode': 200,
-            'body': json.dumps({'message': 'Notification sent successfully'})
+            'body': json.dumps({'message': 'Container updated and notification sent successfully'})
         }
     
     except Exception as e:
         logger.error(f"Error processing event: {str(e)}")
+        return error_response(f"Failed to process event: {str(e)}")
+
+def update_ec2_docker_container(instance_id, image_uri):
+    """
+    Update Docker container on EC2 instance using SSM Run Command
+    
+    Parameters:
+    - instance_id: EC2 instance ID
+    - image_uri: Full ECR image URI to deploy
+    
+    Returns:
+    - Dictionary with update status and output
+    """
+    try:
+        # Command to login to ECR, pull the latest image, stop the existing container, and start a new one
+        command = f"""#!/bin/bash
+        # Login to ECR
+        aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 471112562146.dkr.ecr.eu-central-1.amazonaws.com
+        
+        # Pull the latest image
+        docker pull {image_uri}
+        
+        # Stop and remove any existing container
+        docker stop itemboard || true
+        docker rm itemboard || true
+        
+        # Run the new container
+        docker run -d --name itemboard --network host -p 8000:8000 {image_uri}
+        
+        # Output status
+        echo "Container updated successfully with image: {image_uri}"
+        """
+        
+        # Execute command on the EC2 instance
+        response = ssm_client.send_command(
+            InstanceIds=[instance_id],
+            DocumentName='AWS-RunShellScript',
+            Parameters={'commands': [command]},
+            Comment='Update Docker container with latest image'
+        )
+        
+        command_id = response['Command']['CommandId']
+        logger.info(f"SSM Command sent. Command ID: {command_id}")
+        
+        # Wait for command to complete (you might want to implement a more robust waiting mechanism)
+        import time
+        time.sleep(10)
+        
+        # Get command output
+        output = ssm_client.get_command_invocation(
+            CommandId=command_id,
+            InstanceId=instance_id
+        )
+        
         return {
-            'statusCode': 500,
-            'body': json.dumps({'error': f'Failed to process event: {str(e)}'})
+            'status': output['Status'],
+            'output': output.get('StandardOutputContent', '')
+        }
+    
+    except Exception as e:
+        logger.error(f"Failed to update EC2 instance: {str(e)}")
+        return {
+            'status': 'Failed',
+            'output': str(e)
         }
 
 def send_sns_message(topic_arn, subject, message):
@@ -117,3 +186,18 @@ def send_sns_message(topic_arn, subject, message):
     except Exception as e:
         logger.error(f"Failed to publish message to SNS: {str(e)}")
         raise e
+
+def error_response(message):
+    """
+    Create an error response
+    
+    Parameters:
+    - message: Error message
+    
+    Returns:
+    - Dictionary with status code and error message
+    """
+    return {
+        'statusCode': 500,
+        'body': json.dumps({'error': message})
+    }

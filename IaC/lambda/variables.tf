@@ -32,3 +32,9 @@ variable "lambda_filename" {
   type        = string
   default     = "itemboard-deploy-lambda.zip"
 }
+
+variable "EC2_INSTANCE_ID" {
+  description = "EC2 instance where we deploy docker image"
+  type        = string
+  default     = "i-00e8b14774ea3e887"
+}
