@@ -115,7 +115,7 @@ resource "aws_lambda_function" "sqs_to_sns" {
   role             = aws_iam_role.lambda_role.arn
   handler          = "itemboard-lambda.handler"
   runtime          = "python3.11"
-  timeout          = 10
+  timeout          = 30
   memory_size      = 128 # Minimal memory for simple processing
  
   filename         = "itemboard-lambda.zip"

@@ -60,7 +60,7 @@ def handler(event, context):
                 image_digest = body.get('imageDigest', 'unknown')
                 
                 # Update the EC2 instance with the new Docker image
-                update_result = update_ec2_docker_container(
+                update_ec2_docker_container(
                     ec2_instance_id, 
                     f"471112562146.dkr.ecr.eu-central-1.amazonaws.com/{image_uri}"
                 )
@@ -74,8 +74,6 @@ def handler(event, context):
                     f"Image Digest: {image_digest}\n"
                     f"Timestamp: {timestamp}\n"
                     f"EC2 Instance: {ec2_instance_id}\n"
-                    f"Deployment Status: {update_result['status']}\n\n"
-                    f"Command Output:\n{update_result.get('output', 'No output available')}\n\n"
                     f"This notification was sent automatically by the ECR event notification system."
                 )
             else:
