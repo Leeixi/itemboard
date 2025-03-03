@@ -8,7 +8,6 @@ module "vpc" {
   source = "./VPC"
 }
 
-
 module "sqs" {
   source = "./SQS"
 }

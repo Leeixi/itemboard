@@ -18,13 +18,13 @@ variable "project_name" {
 variable "sqs_queue_url" {
   description = "URL of the SQS queue to monitor"
   type        = string
-  default     = ""
+  default     = "https://sqs.eu-central-1.amazonaws.com/471112562146/itemboard-ecr-events-queue"
 }
 
 variable "email_subscribers" {
   description = "List of email addresses to subscribe to the SNS topic"
   type        = list(string)
-  default     = [""]
+  default     = ["david.levacicc@gmail.com"]
 }
 
 variable "lambda_filename" {

@@ -51,6 +51,7 @@ resource "aws_instance" "debian_server" {
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
     systemctl restart sshd
   EOF
+  depends_on = [ aws_security_group.itemboard_ec2_sg ]
 }
 
 # Optional: Create Elastic IP for the instance
